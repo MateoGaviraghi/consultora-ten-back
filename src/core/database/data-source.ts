@@ -14,8 +14,8 @@ if (databaseUrl) {
     type: 'postgres',
     url: databaseUrl,
     ssl: { rejectUnauthorized: false },
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    migrations: [__dirname + '/migrations/*{.ts,.js}'],
+    entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
+    migrations: [__dirname + '/../../migrations/*{.ts,.js}'],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
   };
@@ -29,8 +29,8 @@ if (databaseUrl) {
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    migrations: [__dirname + '/migrations/*{.ts,.js}'],
+    entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
+    migrations: [__dirname + '/../../migrations/*{.ts,.js}'],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
   };
