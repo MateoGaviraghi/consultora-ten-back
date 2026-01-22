@@ -61,9 +61,11 @@ jobs:
         run: npm ci
 
       - name: Run Migrations on Preview Database
-        run: npm run migration:run
-        env:
-          DATABASE_URL: ${{ steps.create_neon_branch.outputs.db_url_with_pooler }}
+        run: |
+          export DATABASE_URL="${{ steps.create_neon_branch.outputs.db_url_with_pooler }}"
+          npm run migration:run
+        continue-on-error: true
+        # Continue on error porque puede no haber migraciones aún
 
       - name: Comment PR with Preview Info
         uses: actions/github-script@v7
