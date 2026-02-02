@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CategoriasModule } from './modules/categorias/categorias.module';
 import { AdministradorasModule } from './modules/administradoras/administradoras.module';
 import { NomencladoresModule } from './modules/nomencladores/nomencladores.module';
+import { ValoresNomencladorModule } from './modules/valores-nomenclador/valores-nomenclador.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { NomencladoresModule } from './modules/nomencladores/nomencladores.modul
     CategoriasModule,
     AdministradorasModule,
     NomencladoresModule,
+    ValoresNomencladorModule,
   ],
   controllers: [AppController],
   providers: [AppService],
