@@ -6,6 +6,7 @@ import { DatabaseModule } from './core/database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriasModule } from './modules/categorias/categorias.module';
 import { AdministradorasModule } from './modules/administradoras/administradoras.module';
+import { NomencladoresModule } from './modules/nomencladores/nomencladores.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AdministradorasModule } from './modules/administradoras/administradoras
     AuthModule,
     CategoriasModule,
     AdministradorasModule,
+    NomencladoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],
