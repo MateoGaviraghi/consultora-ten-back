@@ -2,12 +2,14 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Administradora } from './entities/administradora.entity';
 import { CreateAdministradoraDto } from './dto/create-administradora.dto';
 import { UpdateAdministradoraDto } from './dto/update-administradora.dto';
+import { RolUsuario } from '../../common/enums/rol-usuario.enum';
 
 @Injectable()
 export class AdministradorasService {
@@ -39,14 +41,32 @@ export class AdministradorasService {
     return this.administradoraRepository.save(administradora);
   }
 
-  async findAll(): Promise<Administradora[]> {
+  async findAll(user?: any): Promise<Administradora[]> {
+    // Si es admin (no superadmin), solo puede ver su propia obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      const administradora = await this.administradoraRepository.findOne({
+        where: { id: user.administradoraId, activo: true },
+      });
+      return administradora ? [administradora] : [];
+    }
+
+    // Superadmin ve todas
     return this.administradoraRepository.find({
       where: { activo: true },
       order: { nombre: 'ASC' },
     });
   }
 
-  async findOne(id: string): Promise<Administradora> {
+  async findOne(id: string, user?: any): Promise<Administradora> {
+    // Si es admin (no superadmin), validar que sea su propia obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      if (user.administradoraId !== id) {
+        throw new ForbiddenException(
+          'No tienes permisos para ver esta administradora',
+        );
+      }
+    }
+
     const administradora = await this.administradoraRepository.findOne({
       where: { id },
     });

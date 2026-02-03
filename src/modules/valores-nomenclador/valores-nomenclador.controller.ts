@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Request,
 } from '@nestjs/common';
 import { ValoresNomencladorService } from './valores-nomenclador.service';
 import { CreateValorNomencladorDto } from './dto/create-valor-nomenclador.dto';
@@ -30,26 +31,32 @@ export class ValoresNomencladorController {
 
   @Get()
   findAll(
+    @Request() req,
     @Query('nomencladorId') nomencladorId?: string,
     @Query('etapa') etapa?: string,
   ) {
     if (nomencladorId) {
-      return this.valoresNomencladorService.findByNomenclador(nomencladorId);
+      return this.valoresNomencladorService.findByNomenclador(
+        nomencladorId,
+        req.user,
+      );
     }
     if (etapa) {
-      return this.valoresNomencladorService.findByEtapa(etapa);
+      return this.valoresNomencladorService.findByEtapa(etapa, req.user);
     }
-    return this.valoresNomencladorService.findAll();
+    return this.valoresNomencladorService.findAll(req.user);
   }
 
   @Get('vigente/:nomencladorId')
   findVigente(
+    @Request() req,
     @Param('nomencladorId') nomencladorId: string,
     @Query('fecha') fecha?: string,
   ) {
     return this.valoresNomencladorService.findVigenteByNomenclador(
       nomencladorId,
       fecha,
+      req.user,
     );
   }
 

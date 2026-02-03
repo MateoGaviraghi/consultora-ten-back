@@ -2,18 +2,23 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull, LessThanOrEqual } from 'typeorm';
 import { ValorNomenclador } from './entities/valor-nomenclador.entity';
 import { CreateValorNomencladorDto } from './dto/create-valor-nomenclador.dto';
 import { UpdateValorNomencladorDto } from './dto/update-valor-nomenclador.dto';
+import { Nomenclador } from '../nomencladores/entities/nomenclador.entity';
+import { RolUsuario } from '../../common/enums/rol-usuario.enum';
 
 @Injectable()
 export class ValoresNomencladorService {
   constructor(
     @InjectRepository(ValorNomenclador)
     private readonly valorNomencladorRepository: Repository<ValorNomenclador>,
+    @InjectRepository(Nomenclador)
+    private readonly nomencladorRepository: Repository<Nomenclador>,
   ) {}
 
   async create(
@@ -25,7 +30,27 @@ export class ValoresNomencladorService {
     return await this.valorNomencladorRepository.save(valorNomenclador);
   }
 
-  async findAll(): Promise<ValorNomenclador[]> {
+  async findAll(user?: any): Promise<ValorNomenclador[]> {
+    // Si es admin, necesitamos filtrar por nomencladores de su obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      const nomencladores = await this.nomencladorRepository.find({
+        where: { administradoraId: user.administradoraId, activo: true },
+        select: ['id'],
+      });
+      const nomencladorIds = nomencladores.map((n) => n.id);
+
+      if (nomencladorIds.length === 0) {
+        return [];
+      }
+
+      return await this.valorNomencladorRepository
+        .createQueryBuilder('valor')
+        .where('valor.nomencladorId IN (:...ids)', { ids: nomencladorIds })
+        .andWhere('valor.deletedAt IS NULL')
+        .orderBy('valor.fechaVigencia', 'DESC')
+        .getMany();
+    }
+
     return await this.valorNomencladorRepository.find({
       where: { deletedAt: IsNull() },
       order: { fechaVigencia: 'DESC' },
@@ -46,14 +71,54 @@ export class ValoresNomencladorService {
     return valorNomenclador;
   }
 
-  async findByNomenclador(nomencladorId: string): Promise<ValorNomenclador[]> {
+  async findByNomenclador(
+    nomencladorId: string,
+    user?: any,
+  ): Promise<ValorNomenclador[]> {
+    // Validar permisos del nomenclador
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      const nomenclador = await this.nomencladorRepository.findOne({
+        where: { id: nomencladorId },
+      });
+
+      if (
+        !nomenclador ||
+        nomenclador.administradoraId !== user.administradoraId
+      ) {
+        throw new ForbiddenException(
+          'No tienes permisos para ver los valores de este nomenclador',
+        );
+      }
+    }
+
     return await this.valorNomencladorRepository.find({
       where: { nomencladorId, deletedAt: IsNull() },
       order: { fechaVigencia: 'DESC' },
     });
   }
 
-  async findByEtapa(etapa: string): Promise<ValorNomenclador[]> {
+  async findByEtapa(etapa: string, user?: any): Promise<ValorNomenclador[]> {
+    // Si es admin, filtrar por nomencladores de su obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      const nomencladores = await this.nomencladorRepository.find({
+        where: { administradoraId: user.administradoraId, activo: true },
+        select: ['id'],
+      });
+      const nomencladorIds = nomencladores.map((n) => n.id);
+
+      if (nomencladorIds.length === 0) {
+        return [];
+      }
+
+      return await this.valorNomencladorRepository
+        .createQueryBuilder('valor')
+        .where('valor.nomencladorId IN (:...ids)', { ids: nomencladorIds })
+        .andWhere('valor.etapa = :etapa', { etapa })
+        .andWhere('valor.deletedAt IS NULL')
+        .orderBy('valor.fechaVigencia', 'DESC')
+        .getMany();
+    }
+
     return await this.valorNomencladorRepository.find({
       where: { etapa: etapa as any, deletedAt: IsNull() },
       order: { fechaVigencia: 'DESC' },
@@ -63,7 +128,24 @@ export class ValoresNomencladorService {
   async findVigenteByNomenclador(
     nomencladorId: string,
     fecha?: string,
+    user?: any,
   ): Promise<ValorNomenclador> {
+    // Validar permisos del nomenclador
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      const nomenclador = await this.nomencladorRepository.findOne({
+        where: { id: nomencladorId },
+      });
+
+      if (
+        !nomenclador ||
+        nomenclador.administradoraId !== user.administradoraId
+      ) {
+        throw new ForbiddenException(
+          'No tienes permisos para ver los valores de este nomenclador',
+        );
+      }
+    }
+
     const fechaConsulta = fecha ? new Date(fecha) : new Date();
 
     const valorVigente = await this.valorNomencladorRepository.findOne({
