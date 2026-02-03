@@ -28,10 +28,10 @@ export class AuthController {
       id: user.id,
       email: user.email,
       nombre: user.nombre,
-      apellido: user.apellido,
       rol: user.rol,
       activo: user.activo,
       createdAt: user.createdAt,
+      administradoraId: user.administradoraId,
     };
   }
 }

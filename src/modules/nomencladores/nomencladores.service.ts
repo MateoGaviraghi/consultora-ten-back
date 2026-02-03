@@ -6,6 +6,7 @@ import { CreateNomencladorDto } from './dto/create-nomenclador.dto';
 import { UpdateNomencladorDto } from './dto/update-nomenclador.dto';
 import { CategoriasService } from '../categorias/categorias.service';
 import { AdministradorasService } from '../administradoras/administradoras.service';
+import { RolUsuario } from '../../common/enums/rol-usuario.enum';
 
 @Injectable()
 export class NomencladoresService {
@@ -29,25 +30,54 @@ export class NomencladoresService {
     return this.nomencladorRepository.save(nomenclador);
   }
 
-  async findAll(): Promise<Nomenclador[]> {
+  async findAll(user?: any): Promise<Nomenclador[]> {
+    const where: any = { activo: true };
+
+    // Si es admin (no superadmin), filtrar por su obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      where.administradoraId = user.administradoraId;
+    }
+
     return this.nomencladorRepository.find({
-      where: { activo: true },
+      where,
       relations: ['categoria', 'administradora'],
       order: { nombre: 'ASC' },
     });
   }
 
-  async findByCategoria(categoriaId: string): Promise<Nomenclador[]> {
+  async findByCategoria(
+    categoriaId: string,
+    user?: any,
+  ): Promise<Nomenclador[]> {
+    const where: any = { categoriaId, activo: true };
+
+    // Si es admin (no superadmin), filtrar por su obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      where.administradoraId = user.administradoraId;
+    }
+
     return this.nomencladorRepository.find({
-      where: { categoriaId, activo: true },
+      where,
       relations: ['categoria', 'administradora'],
       order: { nombre: 'ASC' },
     });
   }
 
-  async findByAdministradora(administradoraId: string): Promise<Nomenclador[]> {
+  async findByAdministradora(
+    administradoraId: string,
+    user?: any,
+  ): Promise<Nomenclador[]> {
+    const where: any = { administradoraId, activo: true };
+
+    // Si es admin (no superadmin), validar que sea su propia obra social
+    if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
+      if (user.administradoraId !== administradoraId) {
+        return []; // No tiene permisos para ver otra obra social
+      }
+    }
+
     return this.nomencladorRepository.find({
-      where: { administradoraId, activo: true },
+      where,
       relations: ['categoria', 'administradora'],
       order: { nombre: 'ASC' },
     });

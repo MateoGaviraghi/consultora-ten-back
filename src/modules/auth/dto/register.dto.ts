@@ -4,6 +4,9 @@ import {
   IsNotEmpty,
   IsString,
   MinLength,
+  IsOptional,
+  IsUUID,
+  ValidateIf,
 } from 'class-validator';
 import { RolUsuario } from '../../../common/enums/rol-usuario.enum';
 
@@ -21,10 +24,11 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'El nombre es requerido' })
   nombre: string;
 
-  @IsString()
-  @IsNotEmpty({ message: 'El apellido es requerido' })
-  apellido: string;
-
   @IsEnum(RolUsuario, { message: 'Rol inválido' })
   rol: RolUsuario;
+
+  @IsOptional()
+  @IsUUID('4', { message: 'El ID de administradora debe ser un UUID válido' })
+  @ValidateIf((o) => o.rol === RolUsuario.ADMIN)
+  administradoraId?: string;
 }
