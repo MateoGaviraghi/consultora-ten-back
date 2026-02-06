@@ -17,6 +17,12 @@ import { CreateEstadoCivilDto } from './dto/create-estado-civil.dto';
 import { UpdateEstadoCivilDto } from './dto/update-estado-civil.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('estado-civil')
 @UseGuards(JwtAuthGuard)
@@ -31,7 +37,7 @@ export class EstadoCivilController {
 
   @Get()
   findAll(
-    @Request() req,
+    @Request() req: RequestWithUser,
     @Query('administradoraId') administradoraId?: string,
   ) {
     if (administradoraId) {
@@ -44,7 +50,7 @@ export class EstadoCivilController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.estadoCivilService.findOne(id, req.user);
   }
 

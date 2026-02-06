@@ -5,6 +5,7 @@ import { PersonaTercerosVinculado } from './persona-terceros-vinculado.entity';
 import { CreatePersonaTercerosVinculadoDto } from './dto/create-persona-terceros-vinculado.dto';
 import { UpdatePersonaTercerosVinculadoDto } from './dto/update-persona-terceros-vinculado.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class PersonaTercerosVinculadoService {
@@ -22,7 +23,7 @@ export class PersonaTercerosVinculadoService {
     return await this.personaTercerosVinculadoRepository.save(personaTercero);
   }
 
-  async findAll(user: any): Promise<PersonaTercerosVinculado[]> {
+  async findAll(user: Usuario): Promise<PersonaTercerosVinculado[]> {
     const queryBuilder = this.personaTercerosVinculadoRepository
       .createQueryBuilder('personaTercero')
       .leftJoinAndSelect('personaTercero.afiliado', 'afiliado')
@@ -44,7 +45,7 @@ export class PersonaTercerosVinculadoService {
     return await queryBuilder.getMany();
   }
 
-  async findOne(id: string, user: any): Promise<PersonaTercerosVinculado> {
+  async findOne(id: string, user: Usuario): Promise<PersonaTercerosVinculado> {
     const queryBuilder = this.personaTercerosVinculadoRepository
       .createQueryBuilder('personaTercero')
       .leftJoinAndSelect('personaTercero.afiliado', 'afiliado')
@@ -78,7 +79,7 @@ export class PersonaTercerosVinculadoService {
   async update(
     id: string,
     updatePersonaTercerosVinculadoDto: UpdatePersonaTercerosVinculadoDto,
-    user: any,
+    user: Usuario,
   ): Promise<PersonaTercerosVinculado> {
     const personaTercero = await this.findOne(id, user);
 
@@ -87,7 +88,7 @@ export class PersonaTercerosVinculadoService {
     return await this.personaTercerosVinculadoRepository.save(personaTercero);
   }
 
-  async remove(id: string, user: any): Promise<void> {
+  async remove(id: string, user: Usuario): Promise<void> {
     const personaTercero = await this.findOne(id, user);
     await this.personaTercerosVinculadoRepository.remove(personaTercero);
   }

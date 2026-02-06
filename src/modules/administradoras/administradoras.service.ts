@@ -10,6 +10,7 @@ import { Administradora } from './entities/administradora.entity';
 import { CreateAdministradoraDto } from './dto/create-administradora.dto';
 import { UpdateAdministradoraDto } from './dto/update-administradora.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class AdministradorasService {
@@ -41,7 +42,7 @@ export class AdministradorasService {
     return this.administradoraRepository.save(administradora);
   }
 
-  async findAll(user?: any): Promise<Administradora[]> {
+  async findAll(user?: Usuario): Promise<Administradora[]> {
     // Si es admin (no superadmin), solo puede ver su propia obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
       const administradora = await this.administradoraRepository.findOne({
@@ -57,7 +58,7 @@ export class AdministradorasService {
     });
   }
 
-  async findOne(id: string, user?: any): Promise<Administradora> {
+  async findOne(id: string, user?: Usuario): Promise<Administradora> {
     // Si es admin (no superadmin), validar que sea su propia obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
       if (user.administradoraId !== id) {

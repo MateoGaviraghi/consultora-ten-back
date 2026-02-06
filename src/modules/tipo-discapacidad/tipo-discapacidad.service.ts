@@ -10,6 +10,7 @@ import { TipoDiscapacidad } from './entities/tipo-discapacidad.entity';
 import { CreateTipoDiscapacidadDto } from './dto/create-tipo-discapacidad.dto';
 import { UpdateTipoDiscapacidadDto } from './dto/update-tipo-discapacidad.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class TipoDiscapacidadService {
@@ -37,8 +38,8 @@ export class TipoDiscapacidadService {
     return this.tipoDiscapacidadRepository.save(tipoDiscapacidad);
   }
 
-  async findAll(user?: any): Promise<TipoDiscapacidad[]> {
-    const where: any = { activo: true };
+  async findAll(user?: Usuario): Promise<TipoDiscapacidad[]> {
+    const where: Record<string, unknown> = { activo: true };
 
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
       where.administradoraId = user.administradoraId;
@@ -51,7 +52,7 @@ export class TipoDiscapacidadService {
     });
   }
 
-  async findOne(id: string, user?: any): Promise<TipoDiscapacidad> {
+  async findOne(id: string, user?: Usuario): Promise<TipoDiscapacidad> {
     const tipoDiscapacidad = await this.tipoDiscapacidadRepository.findOne({
       where: { id },
       relations: ['administradora'],
@@ -76,7 +77,7 @@ export class TipoDiscapacidadService {
 
   async findByAdministradora(
     administradoraId: string,
-    user?: any,
+    user?: Usuario,
   ): Promise<TipoDiscapacidad[]> {
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
       if (user.administradoraId !== administradoraId) {

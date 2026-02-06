@@ -14,6 +14,12 @@ import { CreateTercerosVinculadoDto } from './dto/create-terceros-vinculado.dto'
 import { UpdateTercerosVinculadoDto } from './dto/update-terceros-vinculado.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('terceros-vinculado')
 @UseGuards(JwtAuthGuard)
@@ -24,23 +30,17 @@ export class TercerosVinculadoController {
 
   @Post()
   @UseGuards(OwnAdministradoraGuard)
-  create(
-    @Body() createTercerosVinculadoDto: CreateTercerosVinculadoDto,
-    @Request() req: any,
-  ) {
-    return this.tercerosVinculadoService.create(
-      createTercerosVinculadoDto,
-      req.user,
-    );
+  create(@Body() createTercerosVinculadoDto: CreateTercerosVinculadoDto) {
+    return this.tercerosVinculadoService.create(createTercerosVinculadoDto);
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll(@Request() req: RequestWithUser) {
     return this.tercerosVinculadoService.findAll(req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req: any) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.tercerosVinculadoService.findOne(id, req.user);
   }
 
@@ -49,7 +49,7 @@ export class TercerosVinculadoController {
   update(
     @Param('id') id: string,
     @Body() updateTercerosVinculadoDto: UpdateTercerosVinculadoDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.tercerosVinculadoService.update(
       id,
@@ -60,7 +60,7 @@ export class TercerosVinculadoController {
 
   @Delete(':id')
   @UseGuards(OwnAdministradoraGuard)
-  remove(@Param('id') id: string, @Request() req: any) {
+  remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.tercerosVinculadoService.remove(id, req.user);
   }
 }

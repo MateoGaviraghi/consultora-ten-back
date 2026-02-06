@@ -16,6 +16,12 @@ import { CreateAdministradoraDto } from './dto/create-administradora.dto';
 import { UpdateAdministradoraDto } from './dto/update-administradora.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SuperAdminGuard } from '../../common/guards/super-admin.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('administradoras')
 @UseGuards(JwtAuthGuard)
@@ -31,12 +37,12 @@ export class AdministradorasController {
   }
 
   @Get()
-  findAll(@Request() req) {
+  findAll(@Request() req: RequestWithUser) {
     return this.administradorasService.findAll(req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.administradorasService.findOne(id, req.user);
   }
 

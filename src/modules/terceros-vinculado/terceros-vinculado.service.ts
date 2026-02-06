@@ -9,6 +9,7 @@ import { TercerosVinculado } from './entities/terceros-vinculado.entity';
 import { CreateTercerosVinculadoDto } from './dto/create-terceros-vinculado.dto';
 import { UpdateTercerosVinculadoDto } from './dto/update-terceros-vinculado.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class TercerosVinculadoService {
@@ -19,7 +20,6 @@ export class TercerosVinculadoService {
 
   async create(
     createTercerosVinculadoDto: CreateTercerosVinculadoDto,
-    user: any,
   ): Promise<TercerosVinculado> {
     const tercero = this.tercerosVinculadoRepository.create(
       createTercerosVinculadoDto,
@@ -28,7 +28,7 @@ export class TercerosVinculadoService {
     return await this.tercerosVinculadoRepository.save(tercero);
   }
 
-  async findAll(user: any): Promise<TercerosVinculado[]> {
+  async findAll(user: Usuario): Promise<TercerosVinculado[]> {
     const queryBuilder =
       this.tercerosVinculadoRepository.createQueryBuilder('terceros_vinculado');
 
@@ -44,7 +44,7 @@ export class TercerosVinculadoService {
     return await queryBuilder.getMany();
   }
 
-  async findOne(id: string, user: any): Promise<TercerosVinculado> {
+  async findOne(id: string, user: Usuario): Promise<TercerosVinculado> {
     const tercero = await this.tercerosVinculadoRepository.findOne({
       where: { id },
     });
@@ -70,7 +70,7 @@ export class TercerosVinculadoService {
   async update(
     id: string,
     updateTercerosVinculadoDto: UpdateTercerosVinculadoDto,
-    user: any,
+    user: Usuario,
   ): Promise<TercerosVinculado> {
     const tercero = await this.findOne(id, user);
 
@@ -79,7 +79,7 @@ export class TercerosVinculadoService {
     return await this.tercerosVinculadoRepository.save(tercero);
   }
 
-  async remove(id: string, user: any): Promise<void> {
+  async remove(id: string, user: Usuario): Promise<void> {
     const tercero = await this.findOne(id, user);
     await this.tercerosVinculadoRepository.remove(tercero);
   }

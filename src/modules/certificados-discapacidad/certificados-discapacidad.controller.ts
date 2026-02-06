@@ -14,6 +14,12 @@ import { CreateCertificadoDiscapacidadDto } from './dto/create-certificado-disca
 import { UpdateCertificadoDiscapacidadDto } from './dto/update-certificado-discapacidad.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('certificados-discapacidad')
 @UseGuards(JwtAuthGuard)
@@ -33,12 +39,12 @@ export class CertificadosDiscapacidadController {
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll(@Request() req: RequestWithUser) {
     return this.certificadosDiscapacidadService.findAll(req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req: any) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.certificadosDiscapacidadService.findOne(id, req.user);
   }
 
@@ -47,7 +53,7 @@ export class CertificadosDiscapacidadController {
   update(
     @Param('id') id: string,
     @Body() updateCertificadoDiscapacidadDto: UpdateCertificadoDiscapacidadDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.certificadosDiscapacidadService.update(
       id,
@@ -58,7 +64,7 @@ export class CertificadosDiscapacidadController {
 
   @Delete(':id')
   @UseGuards(OwnAdministradoraGuard)
-  remove(@Param('id') id: string, @Request() req: any) {
+  remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.certificadosDiscapacidadService.remove(id, req.user);
   }
 }

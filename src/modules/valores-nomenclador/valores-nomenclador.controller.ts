@@ -16,6 +16,12 @@ import { ValoresNomencladorService } from './valores-nomenclador.service';
 import { CreateValorNomencladorDto } from './dto/create-valor-nomenclador.dto';
 import { UpdateValorNomencladorDto } from './dto/update-valor-nomenclador.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('valores-nomenclador')
 @UseGuards(JwtAuthGuard)
@@ -31,7 +37,7 @@ export class ValoresNomencladorController {
 
   @Get()
   findAll(
-    @Request() req,
+    @Request() req: RequestWithUser,
     @Query('nomencladorId') nomencladorId?: string,
     @Query('etapa') etapa?: string,
   ) {
@@ -49,7 +55,7 @@ export class ValoresNomencladorController {
 
   @Get('vigente/:nomencladorId')
   findVigente(
-    @Request() req,
+    @Request() req: RequestWithUser,
     @Param('nomencladorId') nomencladorId: string,
     @Query('fecha') fecha?: string,
   ) {
