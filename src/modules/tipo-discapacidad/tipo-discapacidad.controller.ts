@@ -17,6 +17,12 @@ import { CreateTipoDiscapacidadDto } from './dto/create-tipo-discapacidad.dto';
 import { UpdateTipoDiscapacidadDto } from './dto/update-tipo-discapacidad.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('tipo-discapacidad')
 @UseGuards(JwtAuthGuard)
@@ -33,7 +39,7 @@ export class TipoDiscapacidadController {
 
   @Get()
   findAll(
-    @Request() req,
+    @Request() req: RequestWithUser,
     @Query('administradoraId') administradoraId?: string,
   ) {
     if (administradoraId) {
@@ -46,7 +52,7 @@ export class TipoDiscapacidadController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.tipoDiscapacidadService.findOne(id, req.user);
   }
 

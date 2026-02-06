@@ -11,6 +11,7 @@ import { CreateValorNomencladorDto } from './dto/create-valor-nomenclador.dto';
 import { UpdateValorNomencladorDto } from './dto/update-valor-nomenclador.dto';
 import { Nomenclador } from '../nomencladores/entities/nomenclador.entity';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class ValoresNomencladorService {
@@ -30,7 +31,7 @@ export class ValoresNomencladorService {
     return await this.valorNomencladorRepository.save(valorNomenclador);
   }
 
-  async findAll(user?: any): Promise<ValorNomenclador[]> {
+  async findAll(user?: Usuario): Promise<ValorNomenclador[]> {
     // Si es admin, necesitamos filtrar por nomencladores de su obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
       const nomencladores = await this.nomencladorRepository.find({
@@ -73,7 +74,7 @@ export class ValoresNomencladorService {
 
   async findByNomenclador(
     nomencladorId: string,
-    user?: any,
+    user?: Usuario,
   ): Promise<ValorNomenclador[]> {
     // Validar permisos del nomenclador
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
@@ -97,7 +98,10 @@ export class ValoresNomencladorService {
     });
   }
 
-  async findByEtapa(etapa: string, user?: any): Promise<ValorNomenclador[]> {
+  async findByEtapa(
+    etapa: string,
+    user?: Usuario,
+  ): Promise<ValorNomenclador[]> {
     // Si es admin, filtrar por nomencladores de su obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
       const nomencladores = await this.nomencladorRepository.find({
@@ -128,7 +132,7 @@ export class ValoresNomencladorService {
   async findVigenteByNomenclador(
     nomencladorId: string,
     fecha?: string,
-    user?: any,
+    user?: Usuario,
   ): Promise<ValorNomenclador> {
     // Validar permisos del nomenclador
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {

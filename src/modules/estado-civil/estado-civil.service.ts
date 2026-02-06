@@ -10,6 +10,7 @@ import { EstadoCivil } from './entities/estado-civil.entity';
 import { CreateEstadoCivilDto } from './dto/create-estado-civil.dto';
 import { UpdateEstadoCivilDto } from './dto/update-estado-civil.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class EstadoCivilService {
@@ -34,8 +35,8 @@ export class EstadoCivilService {
     return this.estadoCivilRepository.save(estadoCivil);
   }
 
-  async findAll(user?: any): Promise<EstadoCivil[]> {
-    const where: any = { activo: true };
+  async findAll(user?: Usuario): Promise<EstadoCivil[]> {
+    const where: Record<string, unknown> = { activo: true };
 
     // Si es admin (no superadmin), filtrar por su obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
@@ -49,7 +50,7 @@ export class EstadoCivilService {
     });
   }
 
-  async findOne(id: string, user?: any): Promise<EstadoCivil> {
+  async findOne(id: string, user?: Usuario): Promise<EstadoCivil> {
     const estadoCivil = await this.estadoCivilRepository.findOne({
       where: { id },
       relations: ['administradora'],
@@ -73,7 +74,7 @@ export class EstadoCivilService {
 
   async findByAdministradora(
     administradoraId: string,
-    user?: any,
+    user?: Usuario,
   ): Promise<EstadoCivil[]> {
     // Si es admin (no superadmin), validar que sea su propia obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {

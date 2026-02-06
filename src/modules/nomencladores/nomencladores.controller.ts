@@ -17,6 +17,12 @@ import { CreateNomencladorDto } from './dto/create-nomenclador.dto';
 import { UpdateNomencladorDto } from './dto/update-nomenclador.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('nomencladores')
 @UseGuards(JwtAuthGuard)
@@ -31,7 +37,7 @@ export class NomencladoresController {
 
   @Get()
   findAll(
-    @Request() req,
+    @Request() req: RequestWithUser,
     @Query('categoriaId') categoriaId?: string,
     @Query('administradoraId') administradoraId?: string,
   ) {

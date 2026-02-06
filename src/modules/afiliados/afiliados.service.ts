@@ -9,6 +9,7 @@ import { Afiliado } from './entities/afiliado.entity';
 import { CreateAfiliadoDto } from './dto/create-afiliado.dto';
 import { UpdateAfiliadoDto } from './dto/update-afiliado.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class AfiliadosService {
@@ -22,7 +23,7 @@ export class AfiliadosService {
     return await this.afiliadoRepository.save(afiliado);
   }
 
-  async findAll(user: any): Promise<Afiliado[]> {
+  async findAll(user: Usuario): Promise<Afiliado[]> {
     const queryBuilder = this.afiliadoRepository.createQueryBuilder('afiliado');
 
     queryBuilder.leftJoinAndSelect('afiliado.estadoCivil', 'estadoCivil');
@@ -37,7 +38,7 @@ export class AfiliadosService {
     return await queryBuilder.getMany();
   }
 
-  async findOne(id: string, user: any): Promise<Afiliado> {
+  async findOne(id: string, user: Usuario): Promise<Afiliado> {
     const afiliado = await this.afiliadoRepository.findOne({
       where: { id },
       relations: ['estadoCivil', 'administradora'],
@@ -62,7 +63,7 @@ export class AfiliadosService {
   async update(
     id: string,
     updateAfiliadoDto: UpdateAfiliadoDto,
-    user: any,
+    user: Usuario,
   ): Promise<Afiliado> {
     const afiliado = await this.findOne(id, user);
 
@@ -71,7 +72,7 @@ export class AfiliadosService {
     return await this.afiliadoRepository.save(afiliado);
   }
 
-  async remove(id: string, user: any): Promise<void> {
+  async remove(id: string, user: Usuario): Promise<void> {
     const afiliado = await this.findOne(id, user);
     await this.afiliadoRepository.remove(afiliado);
   }

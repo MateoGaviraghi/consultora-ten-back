@@ -7,6 +7,7 @@ import { UpdateNomencladorDto } from './dto/update-nomenclador.dto';
 import { CategoriasService } from '../categorias/categorias.service';
 import { AdministradorasService } from '../administradoras/administradoras.service';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class NomencladoresService {
@@ -30,8 +31,8 @@ export class NomencladoresService {
     return this.nomencladorRepository.save(nomenclador);
   }
 
-  async findAll(user?: any): Promise<Nomenclador[]> {
-    const where: any = { activo: true };
+  async findAll(user?: Usuario): Promise<Nomenclador[]> {
+    const where: Record<string, unknown> = { activo: true };
 
     // Si es admin (no superadmin), filtrar por su obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
@@ -47,9 +48,9 @@ export class NomencladoresService {
 
   async findByCategoria(
     categoriaId: string,
-    user?: any,
+    user?: Usuario,
   ): Promise<Nomenclador[]> {
-    const where: any = { categoriaId, activo: true };
+    const where: Record<string, unknown> = { categoriaId, activo: true };
 
     // Si es admin (no superadmin), filtrar por su obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {
@@ -65,9 +66,9 @@ export class NomencladoresService {
 
   async findByAdministradora(
     administradoraId: string,
-    user?: any,
+    user?: Usuario,
   ): Promise<Nomenclador[]> {
-    const where: any = { administradoraId, activo: true };
+    const where: Record<string, unknown> = { administradoraId, activo: true };
 
     // Si es admin (no superadmin), validar que sea su propia obra social
     if (user && user.rol === RolUsuario.ADMIN && user.administradoraId) {

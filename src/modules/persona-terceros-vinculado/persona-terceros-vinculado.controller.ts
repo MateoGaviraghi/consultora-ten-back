@@ -14,6 +14,12 @@ import { CreatePersonaTercerosVinculadoDto } from './dto/create-persona-terceros
 import { UpdatePersonaTercerosVinculadoDto } from './dto/update-persona-terceros-vinculado.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('persona-terceros-vinculado')
 @UseGuards(JwtAuthGuard)
@@ -34,12 +40,12 @@ export class PersonaTercerosVinculadoController {
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll(@Request() req: RequestWithUser) {
     return this.personaTercerosVinculadoService.findAll(req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req: any) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.personaTercerosVinculadoService.findOne(id, req.user);
   }
 
@@ -49,7 +55,7 @@ export class PersonaTercerosVinculadoController {
     @Param('id') id: string,
     @Body()
     updatePersonaTercerosVinculadoDto: UpdatePersonaTercerosVinculadoDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.personaTercerosVinculadoService.update(
       id,
@@ -60,7 +66,7 @@ export class PersonaTercerosVinculadoController {
 
   @Delete(':id')
   @UseGuards(OwnAdministradoraGuard)
-  remove(@Param('id') id: string, @Request() req: any) {
+  remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.personaTercerosVinculadoService.remove(id, req.user);
   }
 }

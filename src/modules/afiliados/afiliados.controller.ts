@@ -14,6 +14,12 @@ import { CreateAfiliadoDto } from './dto/create-afiliado.dto';
 import { UpdateAfiliadoDto } from './dto/update-afiliado.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OwnAdministradoraGuard } from '../../common/guards/own-administradora.guard';
+import { Usuario } from '../auth/entities/usuario.entity';
+
+// Interfaz para Request autenticado con usuario tipado
+interface RequestWithUser extends Request {
+  user: Usuario;
+}
 
 @Controller('afiliados')
 @UseGuards(JwtAuthGuard)
@@ -22,17 +28,17 @@ export class AfiliadosController {
 
   @Post()
   @UseGuards(OwnAdministradoraGuard)
-  create(@Body() createAfiliadoDto: CreateAfiliadoDto, @Request() req: any) {
+  create(@Body() createAfiliadoDto: CreateAfiliadoDto) {
     return this.afiliadosService.create(createAfiliadoDto);
   }
 
   @Get()
-  findAll(@Request() req: any) {
+  findAll(@Request() req: RequestWithUser) {
     return this.afiliadosService.findAll(req.user);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string, @Request() req: any) {
+  findOne(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.afiliadosService.findOne(id, req.user);
   }
 
@@ -41,14 +47,14 @@ export class AfiliadosController {
   update(
     @Param('id') id: string,
     @Body() updateAfiliadoDto: UpdateAfiliadoDto,
-    @Request() req: any,
+    @Request() req: RequestWithUser,
   ) {
     return this.afiliadosService.update(id, updateAfiliadoDto, req.user);
   }
 
   @Delete(':id')
   @UseGuards(OwnAdministradoraGuard)
-  remove(@Param('id') id: string, @Request() req: any) {
+  remove(@Param('id') id: string, @Request() req: RequestWithUser) {
     return this.afiliadosService.remove(id, req.user);
   }
 }

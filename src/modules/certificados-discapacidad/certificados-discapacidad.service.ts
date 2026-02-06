@@ -5,6 +5,7 @@ import { CertificadoDiscapacidad } from './certificado-discapacidad.entity';
 import { CreateCertificadoDiscapacidadDto } from './dto/create-certificado-discapacidad.dto';
 import { UpdateCertificadoDiscapacidadDto } from './dto/update-certificado-discapacidad.dto';
 import { RolUsuario } from '../../common/enums/rol-usuario.enum';
+import { Usuario } from '../auth/entities/usuario.entity';
 
 @Injectable()
 export class CertificadosDiscapacidadService {
@@ -22,7 +23,7 @@ export class CertificadosDiscapacidadService {
     return await this.certificadoDiscapacidadRepository.save(certificado);
   }
 
-  async findAll(user: any): Promise<CertificadoDiscapacidad[]> {
+  async findAll(user: Usuario): Promise<CertificadoDiscapacidad[]> {
     const queryBuilder = this.certificadoDiscapacidadRepository
       .createQueryBuilder('certificado')
       .leftJoinAndSelect('certificado.afiliado', 'afiliado')
@@ -38,7 +39,7 @@ export class CertificadosDiscapacidadService {
     return await queryBuilder.getMany();
   }
 
-  async findOne(id: string, user: any): Promise<CertificadoDiscapacidad> {
+  async findOne(id: string, user: Usuario): Promise<CertificadoDiscapacidad> {
     const queryBuilder = this.certificadoDiscapacidadRepository
       .createQueryBuilder('certificado')
       .leftJoinAndSelect('certificado.afiliado', 'afiliado')
@@ -69,7 +70,7 @@ export class CertificadosDiscapacidadService {
   async update(
     id: string,
     updateCertificadoDiscapacidadDto: UpdateCertificadoDiscapacidadDto,
-    user: any,
+    user: Usuario,
   ): Promise<CertificadoDiscapacidad> {
     const certificado = await this.findOne(id, user);
 
@@ -78,7 +79,7 @@ export class CertificadosDiscapacidadService {
     return await this.certificadoDiscapacidadRepository.save(certificado);
   }
 
-  async remove(id: string, user: any): Promise<void> {
+  async remove(id: string, user: Usuario): Promise<void> {
     const certificado = await this.findOne(id, user);
     await this.certificadoDiscapacidadRepository.remove(certificado);
   }
