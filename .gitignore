@@ -46,3 +46,6 @@ lerna-debug.log*
 *.swo
 *~
 .tmp
+
+# Scripts de seed (solo para desarrollo local)
+/scripts
