@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const databaseUrl = configService.get('DATABASE_URL');
-        
+
         // Si existe DATABASE_URL, usarla directamente (Render, producción)
         if (databaseUrl) {
           return {
@@ -21,7 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             autoLoadEntities: true,
           };
         }
-        
+
         // Fallback a variables individuales (desarrollo local)
         return {
           type: 'postgres',
@@ -30,7 +30,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           username: configService.get('DATABASE_USER'),
           password: configService.get('DATABASE_PASSWORD'),
           database: configService.get('DATABASE_NAME'),
-          ssl: configService.get('DATABASE_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+          ssl:
+            configService.get('DATABASE_SSL') === 'true'
+              ? { rejectUnauthorized: false }
+              : false,
           entities: [__dirname + '/../**/*.entity{.ts,.js}'],
           synchronize: configService.get('NODE_ENV') === 'development',
           logging: configService.get('NODE_ENV') === 'development',

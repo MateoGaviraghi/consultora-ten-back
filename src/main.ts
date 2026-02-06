@@ -26,7 +26,7 @@ async function bootstrap() {
   // Puerto desde variable de entorno o 3000 por defecto
   const port = configService.get('PORT') || 3000;
   await app.listen(port);
-  
+
   console.log(`Application is running on: http://localhost:${port}`);
 }
 bootstrap();
