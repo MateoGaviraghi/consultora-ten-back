@@ -11,6 +11,9 @@ import { ValoresNomencladorModule } from './modules/valores-nomenclador/valores-
 import { EstadoCivilModule } from './modules/estado-civil/estado-civil.module';
 import { TipoDiscapacidadModule } from './modules/tipo-discapacidad/tipo-discapacidad.module';
 import { TercerosVinculadoModule } from './modules/terceros-vinculado/terceros-vinculado.module';
+import { AfiliadosModule } from './modules/afiliados/afiliados.module';
+import { CertificadosDiscapacidadModule } from './modules/certificados-discapacidad/certificados-discapacidad.module';
+import { PersonaTercerosVinculadoModule } from './modules/persona-terceros-vinculado/persona-terceros-vinculado.module';
 
 @Module({
   imports: [
@@ -27,6 +30,9 @@ import { TercerosVinculadoModule } from './modules/terceros-vinculado/terceros-v
     EstadoCivilModule,
     TipoDiscapacidadModule,
     TercerosVinculadoModule,
+    AfiliadosModule,
+    CertificadosDiscapacidadModule,
+    PersonaTercerosVinculadoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
