@@ -6,8 +6,6 @@ import { DatabaseModule } from './core/database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriasModule } from './modules/categorias/categorias.module';
 import { AdministradorasModule } from './modules/administradoras/administradoras.module';
-import { NomencladoresModule } from './modules/nomencladores/nomencladores.module';
-import { ValoresNomencladorModule } from './modules/valores-nomenclador/valores-nomenclador.module';
 import { EstadoCivilModule } from './modules/estado-civil/estado-civil.module';
 import { TipoDiscapacidadModule } from './modules/tipo-discapacidad/tipo-discapacidad.module';
 import { TercerosVinculadoModule } from './modules/terceros-vinculado/terceros-vinculado.module';
@@ -25,8 +23,6 @@ import { PersonaTercerosVinculadoModule } from './modules/persona-terceros-vincu
     AuthModule,
     CategoriasModule,
     AdministradorasModule,
-    NomencladoresModule,
-    ValoresNomencladorModule,
     EstadoCivilModule,
     TipoDiscapacidadModule,
     TercerosVinculadoModule,
